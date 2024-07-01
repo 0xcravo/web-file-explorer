@@ -1,4 +1,12 @@
 <?php
+function size_format($size, $precision = 2) {
+	$base = log($size, 1024);
+	$suffix = ['B', 'kB', 'MB', 'GB', 'TB', 'PB'][floor($base)];
+
+	return
+		round(pow(1024, $base - floor($base)), $precision).' '.$suffix;
+}
+
 enum Show {
 	case DIR;
 	case FILE;
@@ -36,9 +44,9 @@ $time = function() use ($stat) {
 	$ctime = date($fmt, $stat['ctime']);
 
 	return <<<"EOT"
-		<h2>Last access: $atime</h2>
-		<h2>Last modification: $mtime</h2>
-		<h2>Last change: $ctime</h2>
+		<h2><em>Last access:</em> $atime</h2>
+		<h2><em>Last modification:</em> $mtime</h2>
+		<h2><em>Last change:</em> $ctime</h2>
 	EOT;
 };
 
@@ -67,12 +75,12 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 </head>
 
 <body>
-<form method="get">
+	<form method="get">
 
 <?php if ($show == Show::DIR): ?>
 	<header>
 
-		<h1>Reading: <?= basename($path) ?></h1>
+		<h1><em>Reading:</em> <?= basename($path) ?></h1>
 		<?= $time() ?>
 
 	</header>
@@ -114,8 +122,8 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 <?php elseif ($show == Show::FILE): ?>
 
 	<header>
-		<h1>File: <?= basename($path) ?></h1>
-		<h2>Size: <?= filesize($path) ?></h2>
+		<h1><em>File:</em> <?= basename($path) ?></h1>
+		<h2><em>Size:</em> <?= size_format(filesize($path)) ?></h2>
 		<?= $time() ?>
 		<?= $button('back to '.basename(dirname($path)).'/') ?>
 	</header>
@@ -127,27 +135,39 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 <?php elseif ($show == Show::BLOB): ?>
 
 	<header>
-		<h1>Blob: <?= basename($path) ?> </h1>
-		<h2>Size: <?= filesize($path) ?></h2>
-		<h2>Mime type: <?= $mime ?> </h1>
+		<h1><em>Blob:</em> <?= basename($path) ?> </h1>
+		<h2><em>Size:</em> <?= size_format(filesize($path)) ?></h2>
+		<h2><em>Mime type:</em> <?= $mime ?> </h1>
 		<?= $time() ?>
 		<?= $button('back to '.basename(dirname($path)).'/') ?>
-	<header>
+	</header>
 
 	<main>
 		<?php $data = file_get_contents($path); ?>
 
-		<h3>text</h3>
-		<?php $text = preg_replace('/[^[:print:]]/', '.', $data); ?>
-		<pre><?= $text ?></pre>
+		<div class="blob-items">
+			<div class="blob-item">
+				<h3>text</h3>
+				<pre><?= preg_replace('/[^[:print:]]/', '.', $data); ?></pre>
+			</div>
 
-		<h3>bytes</h3>
-		<?php $bytes = unpack('C*', $data); ?>
-		<pre><?php foreach ($bytes as $byte) echo $byte.' '; ?></pre>
+			<div class="blob-item">
+				<h3>bytes</h3>
+				<pre><?=
+				implode(
+					' ',
+					array_map(
+						fn($b) => sprintf('%02X', $b),
+						unpack('C*', $data)
+					)
+				)
+				?></pre>
+			</div>
+		</div>
 	</main>
 
 <?php endif ?>
 
-</form>
+	</form>
 </body>
 </html>
