@@ -11,7 +11,7 @@ $path = isset($_GET['path']) ?
 	'.';
 
 $button = function($body) use ($path) {
-	$p = realpath($path.'/..');
+	$p = dirname($path);
 
 	return <<<"EOT"
 		<button
@@ -23,8 +23,6 @@ $button = function($body) use ($path) {
 		</button>
 	EOT;
 };
-
-$show = Show::INVALID;
 
 $mime = mime_content_type($path);
 $type = explode('/', $mime)[0];
@@ -44,6 +42,8 @@ $time = function() use ($stat) {
 	EOT;
 };
 
+$show = Show::INVALID;
+
 if (is_dir($path))
 	$show = Show::DIR;
 else if ($type == 'text' and filesize($path) <= 1024 * 10)
@@ -55,73 +55,99 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 
 ?>
 
-<style>
-ul {
-	list-style-type: circle;
-	/*
-	margin: 0;
-	padding: 0;
-	*/
-}
-</style>
+<!DOCTYPE html>
+<html>
 
+<head>
+	<!-- <meta http-equiv="refresh" content="2"> -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	<title>PHP File Explorer at "<?= basename($path) ?>"</title>
+</head>
+
+<body>
 <form method="get">
 
 <?php if ($show == Show::DIR): ?>
+	<header>
 
-	<?php $dir = dir($path); ?>
+		<h1>Reading: <?= basename($path) ?></h1>
+		<?= $time() ?>
 
-	<h1>Reading: <?= basename($path) ?></h1>
-	<?= $time() ?>
+	</header>
 
-	<ul>
+	<main>
+		<ul>
 
-	<li><?= $button('..') ?></li>
+			<li><?= $button('..') ?></li>
 
-	<?php while ($entry = $dir->read()): ?>
+			<?php $dir = dir($path); ?>
+			<?php while ($entry = $dir->read()): ?>
 
-		<?php
-			if ($entry[0] == '.')
-				continue;
-		
-			$file = $entry;
-			if (is_dir("$path/$entry"))
-				$file .= '/';
-		?>
+				<?php
+					if ($entry[0] == '.')
+						continue;
+				
+					$file = $entry;
+					if (is_dir("$path/$entry"))
+						$file .= '/';
+				?>
 
-		<li>
-			<button
-				name="path"
-				type="submit"
-				value="<?= "$path/$file" ?>"
-			>
-			<?= $file ?>
-			</button>
-		</li>
+				<li>
+					<button
+						name="path"
+						type="submit"
+						value="<?= "$path/$file" ?>"
+					>
+					<?= $file ?>
+					</button>
+				</li>
 
-	<?php endwhile ?>
+			<?php endwhile ?>
+			<?= $dir->close(); ?>
 
-	</ul>
+		</ul>
+	</main>
 
-	<?= $dir->close(); ?>
 
 <?php elseif ($show == Show::FILE): ?>
 
-	<h1>File: <?= basename($path) ?></h1>
-	<h2>Size: <?= filesize($path) ?></h2>
-	<?= $time() ?>
-	<?= $button('back to '.basename(dirname($path)).'/') ?>
+	<header>
+		<h1>File: <?= basename($path) ?></h1>
+		<h2>Size: <?= filesize($path) ?></h2>
+		<?= $time() ?>
+		<?= $button('back to '.basename(dirname($path)).'/') ?>
+	</header>
 
-	<pre><?= htmlspecialchars(file_get_contents($path)) ?></pre>
+	<main>
+		<pre><?= htmlspecialchars(file_get_contents($path)) ?></pre>
+	</main>
 
 <?php elseif ($show == Show::BLOB): ?>
 
-	<h1>Blob: <?= basename($path) ?> </h1>
-	<h2>Size: <?= filesize($path) ?></h2>
-	<h2>Mime type: <?= $mime ?> </h1>
-	<?= $time() ?>
-	<?= $button('back to '.basename(dirname($path)).'/') ?>
+	<header>
+		<h1>Blob: <?= basename($path) ?> </h1>
+		<h2>Size: <?= filesize($path) ?></h2>
+		<h2>Mime type: <?= $mime ?> </h1>
+		<?= $time() ?>
+		<?= $button('back to '.basename(dirname($path)).'/') ?>
+	<header>
+
+	<main>
+		<?php $data = file_get_contents($path); ?>
+
+		<h3>text</h3>
+		<?php $text = preg_replace('/[^[:print:]]/', '.', $data); ?>
+		<pre><?= $text ?></pre>
+
+		<h3>bytes</h3>
+		<?php $bytes = unpack('C*', $data); ?>
+		<pre><?php foreach ($bytes as $byte) echo $byte.' '; ?></pre>
+	</main>
 
 <?php endif ?>
 
 </form>
+</body>
+</html>
