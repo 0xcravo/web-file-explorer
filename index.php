@@ -14,9 +14,10 @@ enum Show {
 	case INVALID;
 }
 
-$path = isset($_GET['path']) ?
-	realpath(html_entity_decode($_GET['path'])) :
-	'.';
+if (! isset($_GET['path']))
+	$_GET['path'] = '.';
+
+$path = realpath(html_entity_decode($_GET['path']));
 
 $button = function($body) use ($path) {
 	$p = dirname($path);
@@ -80,7 +81,7 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 <?php if ($show == Show::DIR): ?>
 	<header>
 
-		<h1><em>Reading:</em> <?= basename($path) ?></h1>
+		<h1><em>Folder:</em> <?= basename($path) ?>/</h1>
 		<?= $time() ?>
 
 	</header>
@@ -167,6 +168,10 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 	</main>
 
 <?php endif ?>
+
+	<footer>
+		<p><?= $path == '.' ? __DIR__ : $path ?></p>
+	</footer>
 
 	</form>
 </body>
