@@ -38,7 +38,7 @@ $type = explode('/', $mime)[0];
 $stat = stat($path);
 
 $time = function() use ($stat) {
-	$fmt = 'l jS F Y h:i:s A';
+	$fmt = 'l j F Y h:i:s A';
 
 	$atime = date($fmt, $stat['atime']);
 	$mtime = date($fmt, $stat['mtime']);
