@@ -8,44 +8,33 @@ body {
 	text-align: center;
 }
 
-form {
-	text-align: center;
-
-	display: inline-block;
-	flex-flow: column;
-
-	margin: 0 0 1em 0;
-}
-
-header > * {
-	margin: 0.3em;
-	width: 100%
-}
-
 ul {
 	list-style-type: none;
-	display: inline-block;
 
 	margin: 0;
 	padding: 0;
+}
+
+li {
 	width: 100%;
 }
 
 button {
-	opacity: 0.8;
+	opacity: 0.87;
 	padding: 1% 1%;
 	background-color: var(--fg);
 	border: none;
-	width: 100%;
+	width: 50%;
 }
 
 button:hover {
-	opacity: 0.9;
-	box-shadow: inset 0px 0px 0.9em 0.1em rgba(0, 0, 0, 0.87);
+	opacity: 1;
+	box-shadow: inset 0px 0px 0.7em 0.3em black;
 }
 
 pre {
 	padding: 2em 2em;
+	margin: 2.5%;
 
 	border: 0.2em solid var(--fg);
 
@@ -57,21 +46,18 @@ pre {
 }
 
 header {
+	position: relative;
 	text-align: left;
 
 	display: inline-block;
 	flex-flow: column;
-
-	margin: 0 0 1em 0;
 }
 
 header > * {
-	margin: 0.3em;
+	position: relative;
+	margin: 0.2em;
+	align-self: center;
 	width: 100%
-}
-
-h3 {
-	color: var(--fg);
 }
 
 em {
@@ -83,7 +69,6 @@ em {
 }
 
 .blob-items > * {
-	margin: 2em;
 	flex-basis: 100%;
 	text-align: center;
 }
