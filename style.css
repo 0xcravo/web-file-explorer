@@ -46,13 +46,29 @@ pre {
 }
 
 header {
+	position: relative;
 	text-align: left;
-	margin: 1% 25%;
+
+	display: inline-block;
+	flex-flow: column;
 }
 
-h1, h2, h3 {
+header > * {
+	position: relative;
+	margin: 0.2em;
+	align-self: center;
+	width: 100%
 }
 
 em {
 	color: var(--fg);
+}
+
+.blob-items {
+	display: flex;
+}
+
+.blob-items > * {
+	flex-basis: 100%;
+	text-align: center;
 }

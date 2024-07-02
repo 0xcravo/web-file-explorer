@@ -146,12 +146,12 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 		<?php $data = file_get_contents($path); ?>
 
 		<div class="blob-items">
-			<div class="blob-item">
+			<div>
 				<h3>text</h3>
 				<pre><?= preg_replace('/[^[:print:]]/', '.', $data); ?></pre>
 			</div>
 
-			<div class="blob-item">
+			<div>
 				<h3>bytes</h3>
 				<pre><?=
 				implode(
