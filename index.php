@@ -14,6 +14,11 @@ enum Show {
 	case INVALID;
 }
 
+enum Kind {
+	case IMAGE;
+	case ANY;
+}
+
 if (! isset($_GET['path']))
 	$_GET['path'] = '.';
 
@@ -144,6 +149,17 @@ $show == Show::INVALID and die("`$path` is a invalid file to show");
 	</header>
 
 	<main>
+		<?php
+		$kind = explode('/', $mime);
+
+		if ($kind[0] == 'image') {
+			$img = base64_encode(file_get_contents($path));
+			$fmt = $kind[1];
+			echo <<<"EOT"
+			<img src="data:image/$fmt;base64, $img"></img>
+			EOT;
+		}
+		?>
 		<?php $data = file_get_contents($path); ?>
 
 		<div class="blob-items">

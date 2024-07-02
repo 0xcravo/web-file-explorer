@@ -8,20 +8,6 @@ body {
 	text-align: center;
 }
 
-form {
-	text-align: center;
-
-	display: inline-block;
-	flex-flow: column;
-
-	margin: 0 0 1em 0;
-}
-
-header > * {
-	margin: 0.3em;
-	width: 100%
-}
-
 ul {
 	list-style-type: none;
 	display: inline-block;
@@ -56,13 +42,19 @@ pre {
 	overflow-wrap: anywhere;
 }
 
-header {
-	text-align: left;
-
+form, header {
 	display: inline-block;
 	flex-flow: column;
 
 	margin: 0 0 1em 0;
+}
+
+header {
+	text-align: left;
+}
+
+form {
+	text-align: center;
 }
 
 header > * {
